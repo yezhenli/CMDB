@@ -1,6 +1,6 @@
 >Author：学神IT-1610-python-小小
 # CMDB
->自动化运维系统（Django + Bootstrap + Saltstack），Github：https://github.com/yezhenli/CMDB/tree/master/CMDB
+>自动化运维系统（Django + Bootstrap + Saltstack），Github：https://github.com/yezhenli/CMDB/tree/master
 
 ## Install guideline:
 * 采集端操作系统：Centos 6.5
