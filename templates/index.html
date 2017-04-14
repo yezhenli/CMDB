@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+{% block title %}
+    Dashboard
+{% endblock %}
+
+{% block status %}
+    Dashboard
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+    </ol>
+{% endblock %}
+{% block style %}
+    <style>
+        .spark_bar{
+            width: 22px;
+            height: 30px;
+            margin-left: 65px;
+            margin-bottom: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <div class="inner">
+              <h3>50</h3>
+
+              <p>资产管理</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-tasks"></i>
+            </div>
+            <a href="/assets/asset_list/" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-green">
+            <div class="inner">
+              <h3>5<sup style="font-size: 20px"></sup></h3>
+
+              <p>用户管理</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+            <a href="/user/list/" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-yellow">
+            <div class="inner">
+              <h3>14</h3>
+
+              <p>日志管理</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-log-out"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-red">
+            <div class="inner">
+              <h3>6</h3>
+
+              <p>接口管理</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+      </div>
+    <!-- Main row -->
+    <div class="row">
+        <!-- Left col -->
+        <section class="col-lg-6 connectedSortable">
+          <!-- Custom tabs (Charts with tabs)-->
+          <div class="nav-tabs-custom">
+            <!-- Tabs within a box -->
+            <ul class="nav nav-tabs pull-right">
+              <li class="active"><a href="#" data-toggle="tab">Bar</a></li>
+              <li class="pull-left header"><i class="fa fa-inbox"></i> 资产统计</li>
+            </ul>
+            <div class="tab-content no-padding">
+              <!-- Morris chart - Sales -->
+              <div class="chart tab-pane active" id="bar-chart" style="position: relative; height: 300px;"></div>
+              <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;"></div>
+            </div>
+          </div>
+          <!-- /.nav-tabs-custom -->
+
+             <!-- solid sales graph -->
+          <div class="box box-solid">
+            <div class="box-header">
+              <i class="fa fa-eye"></i>
+              <h3 class="box-title">网络流量</h3>
+            </div>
+            <div class="box-body border-radius-none">
+              <div class="chart active" id="mon-line-chart" style="height: 250px;"></div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer no-border">
+              <div class="row">
+                <div class="col-xs-6 text-center" style="border-right: 1px solid #f4f4f4">
+                  <input type="text" class="knob" data-readonly="true" value="40" data-width="60" data-height="60" data-fgColor="#3c8dbc">
+
+                  <div class="knob-label">网络入流量</div>
+                </div>
+                <!-- ./col -->
+                <div class="col-xs-6 text-center" style="border-right: 1px solid #f4f4f4">
+                  <input type="text" class="knob" data-readonly="true" value="60" data-width="60" data-height="60" data-fgColor="#f39c12">
+
+                  <div class="knob-label">网络出流量</div>
+                </div>
+                <!-- ./col -->
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.box-footer -->
+          </div>
+          <!-- /.box -->
+
+        </section>
+        <!-- /.Left col -->
+        <!-- right col (We are only adding the ID to make the widgets sortable)-->
+        <section class="col-lg-6 connectedSortable">
+
+         <!-- TO DO List -->
+          <div class="nav-tabs-custom">
+            <!-- Tabs within a box -->
+            <ul class="nav nav-tabs pull-right">
+              <li class="active"><a href="#" data-toggle="tab">Donut</a></li>
+              <li class="pull-left header"><i class="fa fa-user"></i> 用户统计</li>
+            </ul>
+            <div class="tab-content no-padding">
+              <!-- Morris chart - Sales -->
+              <div class="chart tab-pane active" id="donut-chart" style="position: relative; height: 300px;"></div>
+              <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;"></div>
+            </div>
+          </div>
+          <!-- /.box -->
+
+            <!-- Map box -->
+          <div class="box box-solid">
+            <div class="box-header">
+
+              <i class="fa fa-database"></i>
+
+              <h3 class="box-title">
+                报障统计
+              </h3>
+            </div>
+            <div class="box-body">
+              <div id="task-bar-chart" style="height: 250px; width: 100%;"></div>
+            </div>
+          </div>
+          <!-- /.box -->
+             <!-- /.box-body-->
+          <div class="box-footer no-border">
+              <div class="row">
+                <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
+                  <div class="spark_bar" style="background: #0b62a4"></div>
+                  <div class="knob-label">已处理</div>
+                </div>
+                <!-- ./col -->
+                <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
+                  <div class="spark_bar" style="background: #7a92a3"></div>
+                  <div class="knob-label">处理中</div>
+                </div>
+                <!-- ./col -->
+                <div class="col-xs-4 text-center">
+                  <div class="spark_bar" style="background: #4da74d"></div>
+                  <div class="knob-label">待处理</div>
+                </div>
+                <!-- ./col -->
+              </div>
+              <!-- /.row -->
+            </div>
+
+
+
+
+        </section>
+        <!-- right col -->
+      </div>
+      <!-- /.row (main row) -->
+
+{% endblock %}
+
+{% block action %}
+    <script>
+        var Data = [];
+        var asset_type = [
+                '服务器',
+                '安全设备',
+                '网络设备',
+                '存储设备',
+                '机房设备',
+                '软件资产',
+                '其它'
+        ];
+        var content_data = [
+                18,
+                6,
+                13,
+                5,
+                7,
+                10,
+                12
+        ];
+        for(var i= 0;i<7;i++){
+            Data.push({"status":asset_type[i],"data":content_data[i]});
+        }
+        var bar = new Morris.Bar({
+            element:'bar-chart',
+            resize:true,
+            data:Data,
+            xkey:'status',
+            ykeys:['data'],
+            labels:['server'],
+            barColors: function (row, series, type) {
+                if(row.label == "Running") return "#00a65a";
+                else if(row.label == "服务器") return "#FFC90E";
+                else if(row.label == "安全设备") return "#BA0B12";
+                else if(row.label == "网络设备") return "#2C8D15";
+                else if(row.label == "存储设备") return "#31158D";
+                else if(row.label == "机房设备") return "#8D157B";
+                else if(row.label == "软件资产") return "#8D8315";
+                else if(row.label == "其它") return "red";
+              },
+            hideHover:true,
+
+        });
+    </script>
+    <script>
+        var Data = [];
+        var colorList = ['#0b62a4', '#7a92a3', '#4da74d', '#afd8f8'];
+        var server_status = [
+                'Running',
+                'Warning',
+                'Stopped',
+                'Disabled'
+        ];
+        var content_data = [
+                18,
+                6,
+                4,
+                5
+        ];
+        for(var i= 0;i<4;i++){
+            Data.push({"status":server_status[i],"data":content_data[i]});
+        }
+        var bar = new Morris.Donut({
+            element:'donut-chart',
+            data: [
+                {label: "在线用户", value: 12},
+                {label: "离线用户", value: 3},
+                {label: "访客用户", value: 8}
+              ],
+            colors:["#00a65a", "#f56954", "#f39c12"]
+        });
+    </script>
+    <script>
+        var dateTime = new Date();
+        var unix_timestamp = Date.parse(dateTime)/1000;
+        var Data = [];
+        var inbound = [
+                9000,
+                11000,
+                60000,
+                4000,
+                50000,
+                8000,
+                7000,
+                70000,
+                10000,
+                80000,
+                30000,
+                12000
+        ];
+        var outbound = [
+                90000,
+                11000,
+                60000,
+                40000,
+                30000,
+                80000,
+                70000,
+                50000,
+                100000,
+                70000,
+                30000,
+                120000
+        ];
+        for(var i= 1;i<13;i++){
+            var times = unix_timestamp+i*5;
+            var objData = new Date(times*1000);
+            Y = objData.getFullYear()+'-';
+            M = (objData.getMonth()+1 <10 ? '0'+(objData.getMonth()+1) : objData.getMonth()+1)+'-';
+            D = objData.getDate()+' ';
+            h = (objData.getHours() <10 ? '0'+objData.getHours() : objData.getHours())+':';
+            m = (objData.getMinutes() <10 ? '0'+objData.getMinutes() : objData.getMinutes())+':';
+            s = objData.getSeconds() < 10 ? '0'+objData.getSeconds() : objData.getSeconds();
+            result_time = Y+M+D+h+m+s;
+            Data.push({"year":result_time,"inbound":inbound[i],"outbound":outbound[i]});
+        }
+        var line = new Morris.Area({
+            element:'mon-line-chart',
+            resize:true,
+            data:Data,
+            xkey:'year',
+            ykeys:['inbound','outbound'],
+            labels:['inbound','outbound'],
+            lineColors:['#3c8dbc',"#f39c12"],
+            hideHover:true
+        });
+    </script>
+    <script>
+        var weeks = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+        var Data = [];
+        var content_data = [
+            [18,5,4],
+            [12,6,3],
+            [15,5,2],
+            [13,4,3],
+            [17,5,4]
+            ];
+        for(var i= 0;i<5;i++){
+            Data.push({"week":weeks[i],"data1":content_data[i][0],"data2":content_data[i][1],"data3":content_data[i][2]});
+        }
+        var bar = new Morris.Bar({
+            element:'task-bar-chart',
+            resize:true,
+            data:Data,
+            xkey:'week',
+            ykeys:['data1','data2','data3'],
+            labels:['已处理','处理中','待处理'],
+            hideHover:true
+        });
+    </script>
+{% endblock %}

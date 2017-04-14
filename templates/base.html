@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>
+     {% block title %}
+            Index
+     {% endblock %}
+  </title>
+
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="icon" href="/static/image/favicon.ico">
+  <!-- Bootstrap 3.3.6 -->
+  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/bootstrap/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="/static/bootstrap/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="/static/plugins/iCheck/flat/blue.css">
+  <!-- Morris chart -->
+  <link rel="stylesheet" href="/static/plugins/morris/morris.css">
+  <!-- jvectormap -->
+  <link rel="stylesheet" href="/static/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
+  <!-- Date Picker -->
+  <link rel="stylesheet" href="/static/plugins/datepicker/datepicker3.css">
+  <!-- Daterange picker -->
+  <link rel="stylesheet" href="/static/plugins/daterangepicker/daterangepicker.css">
+  <!-- bootstrap wysihtml5 - text editor -->
+  <link rel="stylesheet" href="/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+  <!-- custom.css -->
+  <link rel="stylesheet" href="/static/dist/css/custom.css">
+
+  {% block style %}
+  {% endblock %}
+  </head>
+    <body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+
+  <header class="main-header">
+    <!-- Logo -->
+    <a href="/" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b>WSP</b></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><b>学神教育-运维平台</b></span>
+    </a>
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- Messages: style can be found in dropdown.less-->
+          <li class="dropdown messages-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o"></i>
+              <span class="label label-warning">3</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 3 messages</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  <li><!-- start message -->
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="/static/{{ image }}" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        {{ username }}
+                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
+                      </h4>
+                      <p>{{ username |title }}! You are so handsome!</p>
+                    </a>
+                  </li>
+                  <!-- end message -->
+                  <li>
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="/static/{{ image }}" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        {{ username }}
+                        <small><i class="fa fa-clock-o"></i> Today</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="/static/{{ image }}" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        {{ username }}
+                        <small><i class="fa fa-clock-o"></i> Yesterday</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="footer"><a href="#">See All Messages</a></li>
+            </ul>
+          </li>
+          <!-- Notifications: style can be found in dropdown.less -->
+          <!-- User Account: style can be found in dropdown.less -->
+          <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <img src="/static/{{ image }}" class="user-image" alt="User Image">
+              <span class="hidden-xs">{{ username }}</span>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- User image -->
+              <li class="user-header">
+                <img src="/static/{{ image }}" class="img-circle" alt="User Image">
+                <p>
+                  {{ username }} - Web Developer
+                  <small>Member since Nov. 2012</small>
+                </p>
+              </li>
+              <!-- Menu Body -->
+              <li class="user-body">
+                <div class="row">
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Followers</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Sales</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Friends</a>
+                  </div>
+                </div>
+                <!-- /.row -->
+              </li>
+              <!-- Menu Footer-->
+              <li class="user-footer">
+                <div class="pull-left">
+                  <a href="#" class="btn btn-default btn-flat">Profile</a>
+                </div>
+                <div class="pull-right">
+                  <a href="/logout/" class="btn btn-default btn-flat">Sign out</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <!-- Control Sidebar Toggle Button -->
+          <li>
+            <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- Sidebar user panel -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="/static/{{ image }}" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          <p>{{ username }}</p>
+          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+        </div>
+      </div>
+      <!-- search form -->
+      <form action="#" method="get" class="sidebar-form">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="Search...">
+              <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                </button>
+              </span>
+        </div>
+      </form>
+      <!-- /.search form -->
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu">
+        <li class="header">MAIN NAVIGATION</li>
+        <li class="treeview">
+          <a href="/">
+            <i class="fa fa-home"></i> <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-desktop"></i> <span>资产平台</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="active"><a href="/assets/asset_list/"><i class="fa fa-circle-o"></i>资产列表</a></li>
+{#            <li><a href="/assets/server/"><i class="fa fa-circle-o"></i>服务器</a></li>#}
+            <li><a href="/assets/idc/"><i class="fa fa-circle-o"></i>机房管理</a></li>
+            <li><a href="/assets/cabinet/"><i class="fa fa-circle-o"></i>机柜管理</a></li>
+            <li><a href="/assets/rack/"><i class="fa fa-circle-o"></i>机架管理</a></li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-tasks"></i> <span>监控平台</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="active"><a href="/monitor/list/"><i class="fa fa-circle-o"></i>主机列表</a></li>
+            <li><a href="#"><i class="fa fa-circle-o"></i>添加监控</a></li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-eye"></i> <span>运维管理</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="active"><a href="/salt/execute/1/"><i class="fa fa-circle-o"></i>执行命令</a></li>
+            <li><a href="/salt/minions/1/"><i class="fa fa-circle-o"></i>Minions管理</a></li>
+            <li><a href="/salt/file_remote/1/"><i class="fa fa-circle-o"></i>远程文件</a></li>
+            <li><a href="#"><i class="fa fa-circle-o"></i>应用部署</a></li>
+            <li><a href="/salt/record/"><i class="fa fa-circle-o"></i>执行记录</a></li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-user"></i><span>用户系统</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="#"><i class="fa fa-circle-o"></i>个人中心</a></li>
+            <li><a href="/user/list/"><i class="fa fa-circle-o"></i>用户列表</a></li>
+          </ul>
+        </li>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-align-justify"></i> <span>权限系统</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="/auth/cmdb/"><i class="fa fa-circle-o"></i>权限分配</a></li>
+            <li><a href="/auth/cmdb/add/"><i class="fa fa-circle-o"></i>添加角色</a></li>
+            <li><a href="#"><i class="fa fa-circle-o"></i>服务器授权</a></li>
+          </ul>
+        </li>
+{#        <li class="treeview">#}
+{#          <a href="#">#}
+{#            <i class="fa fa-database"></i> <span>报障处理</span>#}
+{#            <span class="pull-right-container">#}
+{#              <i class="fa fa-angle-left pull-right"></i>#}
+{#            </span>#}
+{#          </a>#}
+{#          <ul class="treeview-menu">#}
+{#            <li><a href="#"><i class="fa fa-circle-o"></i>故障申报</a></li>#}
+{#            <li><a href="#"><i class="fa fa-circle-o"></i>故障处理</a></li>#}
+{#            <li><a href="#"><i class="fa fa-circle-o"></i>下架记录</a></li>#}
+{#          </ul>#}
+{#        </li>#}
+        <li class="header">LABELS</li>
+        <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>
+        <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>Warning</span></a></li>
+        <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Information</span></a></li>
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+
+  <div class="content-wrapper">
+    <section class="content-header">
+      <h1>
+        {% block status %}
+
+        {% endblock %}
+      </h1>
+       {% block breadcrumb %}
+
+       {% endblock %}
+    </section>
+    <section class="content">
+    {% block content %}
+
+    {% endblock %}
+
+    </section>
+  </div>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 2.2.3 -->
+<script src="/static/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="/static/jquery/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button);
+</script>
+<!-- Bootstrap 3.3.6 -->
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<!-- Morris.js charts -->
+<script src="/static/jquery/raphael-min.js"></script>
+<script src="/static/plugins/morris/morris.min.js"></script>
+<script src="/static/plugins/jgchart/jgcharts.js"></script>
+<script src="/static/dist/js/echarts.js"></script>
+<!-- Sparkline -->
+<script src="/static/plugins/sparkline/jquery.sparkline.min.js"></script>
+<!-- jvectormap -->
+<script src="/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+<!-- jQuery Knob Chart -->
+<script src="/static/plugins/knob/jquery.knob.js"></script>
+<!-- daterangepicker -->
+<script src="/static/jquery/moment.min.js"></script>
+<script src="/static/plugins/daterangepicker/daterangepicker.js"></script>
+<!-- datepicker -->
+<script src="/static/plugins/datepicker/bootstrap-datepicker.js"></script>
+<!-- Bootstrap WYSIHTML5 -->
+<script src="/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<!-- Slimscroll -->
+<script src="/static/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="/static/plugins/fastclick/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/dist/js/app.min.js"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="/static/dist/js/pages/dashboard.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="/static/dist/js/demo.js"></script>
+<script src="/static/dist/js/pages/checkbox.js"></script>
+{% block action %}
+
+{% endblock %}
+</body>
+</html>

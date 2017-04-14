@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block title %}
+    增加资产
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li>资产管理</li>
+        <li class="active">增加资产</li>
+    </ol>
+{% endblock %}
+{% block status %}
+    增加资产
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-info">
+            <!-- form start -->
+            <form class="form-horizontal" action="/assets/asset_add/" method="post">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="inputEmail3" class="col-sm-2 control-label">资产类型</label>
+
+                  <div class="col-sm-4">
+                    <select name="type" style="height: 34px;width: 120px">
+                        <option value="Server">服务器</option>
+                        <option value="Router">路由器</option>
+                        <option value="Switch">交换机</option>
+                        <option value="Storage">存储设备</option>
+                        <option value="Security">安全设备</option>
+                        <option value="Equipment">机房设备</option>
+                        <option value="Software">软件资产</option>
+                        <option value="Others">其它</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">资产名称</label>
+                  <div class="col-sm-3">
+                    <input type="text" class="form-control"name="name">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">资产SN号</label>
+                  <div class="col-sm-3">
+                    <input type="text" class="form-control" name="sn">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">制造者</label>
+                  <div class="col-sm-3">
+                      <select name="manufactory" style="height: 34px;width: 120px">
+                          <option value="">------</option>
+                          {% for manufactory in manufactory_list %}
+                              <option value="{{ manufactory.id }}">{{ manufactory.manufactory }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">管理IP</label>
+
+                  <div class="col-sm-3">
+                    <input type="text" class="form-control" name="management_ip">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">合同</label>
+
+                  <div class="col-sm-3">
+                    <select name="contract" style="height: 34px;width: 120px">
+                          <option value="">--------</option>
+                          {% for contract in contract_list %}
+                              <option value="{{ contract.id }}">{{ contract.name }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">购买日期</label>
+
+                  <div class="col-sm-3">
+                    <input type="date" class="form-control" name="trade_date">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">过保修期</label>
+
+                  <div class="col-sm-3">
+                    <input type="date" class="form-control" name="expire_date">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">价格</label>
+
+                  <div class="col-sm-3">
+                    <input type="number" class="form-control" name="price">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">所属业务线</label>
+
+                  <div class="col-sm-3">
+                    <select name="business_unit" style="height: 34px;width: 120px">
+                          <option value="">--------</option>
+                          {% for business_unit in business_unit_list %}
+                              <option value="{{ business_unit.id }}">{{ business_unit.name }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">资产管理员</label>
+
+                  <div class="col-sm-3">
+                    <select name="admin" style="height: 34px;width: 120px">
+                          <option value="">--------</option>
+                          {% for username in username_list %}
+                              <option value="{{ username.id }}">{{ username.username }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">IDC机房</label>
+
+                  <div class="col-sm-3">
+                    <select name="idc" style="height: 34px;width: 120px">
+                          <option value="">------</option>
+                          {% for idc in idc_list %}
+                              <option value="{{ idc.id }}">{{ idc.name }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">状态</label>
+
+                  <div class="col-sm-3">
+                    <select name="status" style="height: 34px;width: 120px">
+                        <option value="">--------</option>
+                        <option value="0">在线</option>
+                        <option value="1">已下线</option>
+                        <option value="2">未知</option>
+                        <option value="3">故障</option>
+                        <option value="4">备用</option>
+                      </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">备注</label>
+
+                  <div class="col-sm-3">
+                      <textarea name="memo" cols="60" rows="8"></textarea>
+                  </div>
+                </div>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer" style="margin-right: 100px">
+                <button type="submit" class="btn btn-info pull-right">保存</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+          </div>
+    </div>
+</div>
+{% endblock %}

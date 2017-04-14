@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}
+    服务器列表
+{% endblock %}
+{% block status %}
+    服务器列表
+{% endblock %}
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li>资产平台</li>
+        <li class="active">服务器</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+<section class="content">
+    <div class="row">
+        <div class="col-lg-12" style="margin: 0 20px 10px 0; font-size: 12px">
+            <div class="box">
+                <div class="box-body">
+                    <table id="example1" class="table table-striped">
+                        <thead>
+                            <tr style="color: white;background: #6f7e95;">
+                                <th><input type="checkbox" id="checkAll"></th>
+                                <th>IP地址</th>
+                                <th>服务器名称</th>
+                                <th>系统类型</th>
+                                <th>所属机房</th>
+                                <th>机架位置</th>
+                                <th>上架日期</th>
+                                <th>使用状态</th>
+                                <th>主机</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        {% for server in server_list %}
+                            <tbody>
+                                <tr>
+                                    <td><input type="checkbox" name="_dataCheckBox"></td>
+                                    <td><a href="{% url 'cmdb:detail' server.ip %}" title="详细信息"  data-toggle="modal" data-target="#server_modal">
+                                        {{ server }}</a></td>
+                                    <td>{{ server.name }}</td>
+                                    <td>{{ server.ip.host.system_type.name }}</td>
+                                    <td>{{ server.idc }}</td>
+                                    <td>{{ server.location }}</td>
+                                    <td>{{ server.start_date }}</td>
+                                    <td>{{ server.status }}</td>
+                                    <td><a href="{% url 'cmdb:host' %}?server_id={{ server.id }}">
+                                        {{ server.host_set.count }}台</a></td>
+                                    <td>
+                                        <a class="btn btn-info btn-xs" href="/admin/CMDB/server/{{ server.id }}/" target="_blank">
+                                            <span class="glyphicon glyphicon-edit"></span>&nbsp;修&nbsp;改
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

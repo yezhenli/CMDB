@@ -1,0 +1,7 @@
+django==1.9.0
+paramiko
+MySQL-python
+Jinja2
+configparser
+xlrd
+

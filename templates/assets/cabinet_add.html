@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}
+    增加机柜
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li>机柜管理</li>
+        <li class="active">增加机柜</li>
+    </ol>
+{% endblock %}
+{% block status %}
+    增加机柜
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-info">
+            <form class="form-horizontal" action="/assets/cabinet_add/" method="post">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">机房</label>
+                  <div class="col-sm-3">
+                    <select name="idc" style="height: 34px;width: 120px">
+                          <option value="">--------</option>
+                          {% for idc in idc_list %}
+                              <option value="{{ idc.id }}">{{ idc.name }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">机柜编号</label>
+                  <div class="col-sm-3">
+                    <input type="text" class="form-control" name="name">
+                  </div>
+                </div>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer" style="margin-right: 100px">
+                <button type="submit" class="btn btn-info pull-right">保存</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+          </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+
+#说明：此配置只需在Master端配置
+
+# 安装salt-api
+[root@Master ~]# yum install -y salt-api
+
+# 创建用户
+[root@Master ~]# useradd -M -s /sbin/nologin saltapi
+[root@Master ~]# echo "123456" | passwd saltapi --stdin
+
+# 添加配置文件
+[root@Master ~]# mkdir -p /etc/salt/master.d/
+[root@Master ~]# vim /etc/salt/master.d/eauth.conf
+external_auth:
+  pam:
+    saltapi:
+      - .*
+      - '@wheel'
+      - '@runner'
+
+[root@Master ~]# vim /etc/salt/master.d/api.conf
+rest_cherrypy:
+  port: 8888
+  host: 192.168.1.20
+  disable_ssl: True
+
+[root@Master ~]# systemctl restart salt-master.service
+[root@Master ~]# systemctl restart salt-api.service
+
+
+# 获取token
+[root@centos7 ~]# curl -k https://192.168.1.20:8888/login -H "Accept: application/x-yaml" -d username='saltapi' -d password='123456' -d eauth='pam'
+return:
+- eauth: pam
+  expire: 1427373796.305001
+  perms:
+  - .*
+  - '@wheel'
+  - '@runner'
+  start: 1427330596.305
+  token: ec8d60e3b492e9947e557eefd4112802053432c7
+  user: saltapi

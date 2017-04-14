@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    成员管理
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li>权限系统</li>
+        <li class="active">成员管理</li>
+    </ol>
+{% endblock %}
+{% block status %}
+    成员管理
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-info">
+            <form class="form-horizontal" action="/auth/cmdb/group_user/{{ group_obj.id }}/" method="post">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="" class="col-sm-2 control-label">权限组名</label>
+                  <div class="col-sm-3"><li class="form-control" >{{ group_obj.group_name }}</li></div>
+                </div>
+                <div class="form-group">
+                  <label for="" class="col-sm-2 control-label"></label>
+                  <label for="" class="col-sm-3 pull-left">所有成员</label>
+                  <label for="" class="col-sm-4" style="margin-left: 43px">权限组用户</label>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-sm-2"></label>
+                    <div class="col-sm-10">
+                        <select name="groups" id="groups" class="col-sm-2" multiple="multiple" size="12" style="width: 249px">
+                            {% for user in userall %}
+                                {% if user not in all_user %}
+                                    <option value="{{ user.id }}">{{ user.username }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <div class="col-sm-1" style="text-align: center;margin-top: 7%">
+                            <div>
+                                <button type="button" onclick="move_right('groups', 'groups_selected')"><i class="glyphicon glyphicon-chevron-right"></i></button>
+                            </div>
+                            &nbsp;
+                            <div>
+                                <button type="button" onclick="move_left('groups_selected', 'groups')"><i class="glyphicon glyphicon-chevron-left"></i></button>
+                            </div>
+                        </div>
+                        <select name="groups_selected" id="groups_selected" class="col-sm-2" multiple="multiple" size="12" style="width: 249px">
+                            {% for user in all_user %}
+                                <option value="{{ user.id}}" selected>{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer" style="margin-right: 100px">
+                <button type="submit" class="btn btn-info pull-right">保存</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+          </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block action %}
+    <script>
+        function move_left(from, to) {
+        $("#"+from+" option").each(function(){
+            if ( $(this).prop("selected") == true ) {
+                $("#"+to).append(this);
+                $(this).attr("selected",'false');
+            }
+{#            $(this).attr("selected",'true');#}
+        });
+    }
+    function move_right(from, to) {
+        $("#"+from+" option").each(function(){
+            if ( $(this).prop("selected") == true ) {
+                $("#"+to).append(this);
+            }
+        });
+    }
+    </script>
+{% endblock %}

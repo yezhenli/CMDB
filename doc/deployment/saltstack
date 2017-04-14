@@ -1,0 +1,70 @@
+Master端
+[root@Master ~]# hostname
+Master.salt.com
+
+Minion端
+[root@Minion ~]# hostname
+Minion.salt.com
+填写hosts文件 相互解析
+Master端
+[root@Master ~]# tail -2 /etc/hosts
+192.168.1.21 Minion.salt.com
+192.168.1.20 Master.salt.com
+Minion端
+[root@Minion ~]# tail -2 /etc/hosts
+192.168.1.20 Master.salt.com
+192.168.1.21 Minion.salt.com
+
+关闭iptables
+[root@Master ~]# service iptables stop
+[root@Master ~]# chkconfig iptables off
+[root@Minion ~]# service iptables stop
+[root@Minion ~]# chkconfig iptables off
+
+
+Master配置
+如果机器内没有epel，就需要下载（2台机器都需要执行）
+1.1-	配置epel源
+
+[root@Master ~]# rpm -Uvh http://mirrors.ustc.edu.cn/fedora/epel/6/x86_64/epel-release-6-8.noarch.rpm
+[root@Master ~]# yum -y install salt-master
+在另一台服务器上安装：yum -y install salt-minion
+
+1.2-编辑配置文件
+ [root@Master ~]# vim /etc/salt/master
+default_include: master.d/*.conf   #关闭注释
+interface: 0.0.0.0                 #监听地址
+file_roots:                        #salt状态文件
+ base:                            #笔记自定义salt状态文件路径
+   - /srv/salt
+
+YAM语法有严格的要求, file_roots为顶格, base前面为2个空格, -前面4个空格后面1个空格。
+
+1.3-启动master
+ [root@Master ~]# service salt-master start
+ [root@Master ~]# ps -aux | grep salt
+
+
+Minon端配置
+1.1-准备epel源
+[root@Minion ~]# rpm -Uvh http://mirrors.ustc.edu.cn/fedora/epel/6/x86_64/epel-release-6-8.noarch.rpm
+[root@Minion ~]# yum -y install salt-minion
+
+1.2-编辑配置文件
+ [root@Minion ~]# vim /etc/salt/minion
+master: 192.168.1.20     # 这行代码表示我要连接的saltstack的master是192.168.1.20
+id: Agent                # 标识minion端id，唯一
+
+1.3-启动minion
+[root@Minion ~]# service salt-minion start
+
+测试saltstack
+master端配置
+SaltStack使用SSL签证的方式进行安全认证
+ minion向master投诚后, 还需要master接受才行. 这个过程叫做”授信”.
+1.	查看minion列表
+[root@Master ~]# salt-key -L   #查看当前的证书签证的情况
+
+2.	接受所有key
+[root@Master ~]# salt-key -A        #同意签证所有没有钱签名的证书
+

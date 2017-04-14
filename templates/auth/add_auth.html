@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    权限管理
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li>权限系统</li>
+        <li class="active">权限管理</li>
+    </ol>
+{% endblock %}
+{% block status %}
+    权限管理
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-info">
+            <form class="form-horizontal" action="/auth/cmdb/group_auth/{{ group_obj.id }}/" method="post">
+                <div class="box-body">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"> 权限组 </label>
+                        <div class="col-sm-3"><li class="form-control" >{{ group_obj.group_name }}</li></div>
+                        <div class="col-sm-3" hidden="hidden"><input  type="text" name="group_name" value="{{ group_obj.id }}" class="form-control" readonly="readonly"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"> 资产管理 </label>
+                        <div class="col-sm-7">
+                            {{ data.select_host }}&nbsp;<span style="font-size: 14px">查看资产</span>
+                            {{ data.add_host }}&nbsp;<span style="font-size: 14px">添加主机</span>
+                            {{ data.bat_add_host }}&nbsp;<span style="font-size: 14px">批量添加</span>
+                            {{ data.edit_host }}&nbsp;<span style="font-size: 14px">修改资产</span>
+                            {{ data.update_host }}&nbsp;<span style="font-size: 14px">更新资产</span>
+                            {{ data.delete_host }}&nbsp;<span style="font-size: 14px">删除资产</span>
+                            {{ data.add_line_auth }}&nbsp;<span style="font-size: 14px">产品线管理</span>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group"><label class="col-sm-2 control-label"> 发布权限 </label>
+                        <div class="col-sm-7">
+                        {{ data.auth_project }}&nbsp;<span style="font-size: 14px">自动化发布</span>
+                        {{ data.auth_highstate }}&nbsp;<span style="font-size: 14px">自动化部署</span>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group"><label class="col-sm-2 control-label"> 用户管理 </label>
+                        <div class="col-sm-7">
+                         {{ data.add_user }}&nbsp;<span style="font-size: 14px">添加用户</span>
+                         {{ data.edit_user }}&nbsp;<span style="font-size: 14px">修改用户</span>
+                         {{ data.edit_pass }}&nbsp;<span style="font-size: 14px">修改密码</span>
+                         {{ data.delete_user }}&nbsp;<span style="font-size: 14px">删除用户</span>
+    {#                         {{ data.add_user_auth }}#}
+                         {{ data.add_department }}&nbsp;<span style="font-size: 14px">部门管理</span>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group"><label class="col-sm-2 control-label"> 系统管理 </label>
+                        <div class="col-sm-7">
+                         {{ data.setup_system }}&nbsp;<span style="font-size: 14px">安装系统</span>
+                         {{ data.upload_system }}&nbsp;<span style="font-size: 14px">主机上报</span>
+                         {{ data.salt_keys }}&nbsp;<span style="font-size: 14px">批量管理</span>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group"><label class="col-sm-2 control-label"> 项目管理 </label>
+                        <div class="col-sm-7">
+                         {{ data.project_auth }}&nbsp;<span style="font-size: 14px">项目列表</span>
+                         {{ data.add_project }}&nbsp;<span style="font-size: 14px">添加项目</span>
+                         {{ data.edit_project }}&nbsp;<span style="font-size: 14px">修改项目</span>
+                         {{ data.delete_project }}&nbsp;<span style="font-size: 14px">删除项目</span>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group"><label class="col-sm-2 control-label"> 机房管理 </label>
+                        <div class="col-sm-7">
+                         {{ data.select_idc }}&nbsp;<span style="font-size: 14px">查看机房</span>
+                         {{ data.add_idc }}&nbsp;<span style="font-size: 14px">添加机房</span>
+                         {{ data.edit_idc }}&nbsp;<span style="font-size: 14px">修改机房</span>
+                         {{ data.del_idc }}&nbsp;<span style="font-size: 14px">删除机房</span>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="form-group"><label class="col-sm-2 control-label"> 日志 </label>
+                        <div class="col-sm-7">
+                         {{ data.auth_log }}&nbsp;<span style="font-size: 14px">salt执行记录</span>
+                         {{ data.cmdb_log }}&nbsp;<span style="font-size: 14px">资产操作记录</span>
+                         {{ data.server_audit }}&nbsp;<span style="font-size: 14px">服务器操作记录</span>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+
+
+                    <div class="form-group">
+                       <div class="col-sm-4 col-sm-offset-5">
+                           <button type="submit" class="btn btn-info pull-right">提交</button>
+                       </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

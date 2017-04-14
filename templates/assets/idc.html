@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}
+    机房管理
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active">机房管理</li>
+    </ol>
+{% endblock %}
+{% block status %}
+    机房展示页
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div href="#" class="col-lg-12" style="margin: 0 20px 10px 0">
+            <input type="text" size="30" placeholder="搜索" style="height: 30px">
+            <select onchange="ChangeIdc(this)" id="idc-search" style="height: 30px;width: 120px">
+                <option value="">以 机房</option>
+                <option disabled>-----</option>
+                {% for idc in idc_level_list %}
+                    <option value="{{ idc.id }}">{{ idc.name }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-inline btn-success" style="height: 30px">搜索</button>
+            <a href="/assets/idc_add/" class="pull-right">
+                <i class="glyphicon glyphicon-plus"></i>增加机房
+            </a>
+        </div>
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <table width="100%" class="table table-striped table-hover" id="dataTables-example">
+                        <thead>
+                            <tr style="color: white;background: #6f7e95;">
+                                <th><input type="checkbox" id="checkAll"></th>
+                                <th>机房名称</th>
+                                <th>机房类型</th>
+                                <th>联系电话</th>
+                                <th>联系人</th>
+                                <th>机房地址</th>
+                                <th>ISP类型</th>
+                                <th>创建时间</th>
+                                <th>更新时间</th>
+                            </tr>
+                            {% for idc in idc_list %}
+                            <tr>
+                                <td><input type="checkbox" name="_dataCheckBox"></td>
+                                <td><a href="/assets/idc/{{ idc.id }}/change/">{{ idc.name }}</a></td>
+                                <td>{{ idc.type.name }}</td>
+                                <td>{{ idc.phone }}</td>
+                                <td>{{ idc.contacts }}</td>
+                                <td>{{ idc.address }}</td>
+                                <td>{{ idc.operator.name }}</td>
+                                <td>{{ idc.create_time }}</td>
+                                <td>{{ idc.update_time }}</td>
+                            </tr>
+                            {% endfor %}
+                        </thead>
+                    </table>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+        </div>
+       <!-- /.col-lg-12 -->
+    </div>
+    <div class="col-sm-5 pull-left" id="action_buttons" style="font-size: 12px">
+      <span id="selected_count">0</span>&nbsp;选择 &nbsp;
+      <button class="btn btn-default btn-sm" disabled>启用</button>
+      <button class="btn btn-default btn-sm" disabled>禁用</button>
+      <button class="btn btn-default btn-sm" disabled>修改</button>
+      <button class="btn btn-default btn-sm" disabled>删除</button>
+    </div>
+    <div class="pull-right" style="margin-right: 20px">
+        {{ count }}&nbsp;机房
+    </div>
+
+{% endblock %}
+
+{% block action %}
+    <script>
+        function ChangeIdc(doc) {
+            var idc_level = $(doc).val();
+            location.href="/assets/idc/?idc_level="+idc_level;
+            $(this).val(idc_level).attr("selected",true);
+        }
+        window.onload=function () {
+            $("#idc-search").find("option[value='{{ idc_level }}']").attr("selected",true);
+        }
+    </script>
+{% endblock %}
+

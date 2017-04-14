@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load custom_tag %}
+{% block title %}
+    监控概述
+{% endblock %}
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active">监控概述</li>
+    </ol>
+{% endblock %}
+{% block style %}
+
+{% endblock %}
+{% block status %}
+    监控信息
+{% endblock %}
+
+{% block content %}
+<section class="content">
+    <div class="row" >
+      <div class="col-lg-12" >
+        <p class="text-center">
+        <span class="label label-default">NotMoniterd</span>  <!--图例 -->
+        <span class="label label-warning">Warning</span>
+        <span class="label label-danger">Criticl</span>
+      </p>
+      <div class="box">
+          <table id="t1" class="table table-striped table-hover">
+            <tr style="color: white;background: #6f7e95;">
+              <th><input type="checkbox" id="checkAll"></th>
+              <th>Servername</th>
+              <th>Ipaddress</th>
+              <th>Template</th>
+              <th>Status</th>
+              <th>Ping</th>
+              <th>Disk Usage</th>
+              <th>Mem Usage</th>
+              <th>Actions</th>
+            </tr>
+            {% for i in host %}
+            <tr>
+              <td><input type="checkbox" name="_dataCheckBox"></td>
+              <td><a href="/monitor/draw/?host_id={{ i.id }}">{{ i.hostname }}</a></td>   <!--给链接带上post，接下来做图表时会用到 -->
+              <td>{{ i.ip }}</td>
+              <td>{{ i.template_id.name }}</td>
+              <td>
+                  {% ifequal i.available 1 %}
+                      <a href="/monitor/list/?host_id={{ i.id }}&ava={{ i.available }}" class="btn btn-success btn-xs" onclick="return confirm('确定停止?')">已启用</a>
+                  {% else %}
+                      <a href="/monitor/list/?host_id={{ i.id }}&ava={{ i.available }}" class="btn btn-danger btn-xs" onclick="return confirm('确定启动?')">已停用</a>
+                  {% endifequal %}
+              </td>
+              <td>{{ i.ping_set.select_related |ping }}</td>
+              <td>{{ i.diskusage_set.select_related | disk_usage}}%</td>
+              <td>{{ i.memoryusage_set.select_related | mem_usage }}%</td>
+              <td><a class="btn btn-info btn-xs" href="/monitor/collect/{{ i.id }}/" disabled>数据采集</a></td>
+            </tr>
+            {% endfor %}
+          </table>
+      </div>
+      </div>
+    </div>
+    <div class="col-sm-5 pull-left" id="action_buttons" style="font-size: 12px">
+      <span id="selected_count">0</span>&nbsp;选择 &nbsp;
+      <button class="btn btn-default btn-sm" disabled>启用</button>
+      <button class="btn btn-default btn-sm" disabled>禁用</button>
+      <button class="btn btn-default btn-sm" disabled>修改</button>
+      <button class="btn btn-default btn-sm" disabled onclick="RackDelete()">删除</button>
+    </div>
+    <div class="pull-right" style="margin-right: 20px">
+        {{ count }}&nbsp;主机
+    </div>
+</section>
+{% endblock %}
+
+{% block action %}
+    <script type="text/javascript">
+    window.onload = function (){
+      var NG = "0";    <!--PING的NG值，这个值是str -->
+      var NM = 0;       <!--磁盘未监视的值 -->
+      var WAR = 80;     <!--磁盘警告的值 -->
+      var CRI = 90;     <!--磁盘严重的值 -->
+      var table = document.getElementById("t1");
+      for (var s = 0; s < table.rows.length; s ++){   <!--历遍表格 -->
+        rowObj = table.rows[s];
+        var t2 = rowObj.cells[5].innerHTML;
+        var t3 = rowObj.cells[6].innerHTML.slice(0,-2);  <!--slice用来去掉百分号 -->
+        var t4 = rowObj.cells[7].innerHTML.slice(0,-2);
+        if(t2 == NG){
+          rowObj.cells[5].style.backgroundColor="red";  <!--PINGNG时显示红色 -->
+        }
+        if(t3 == NM ){
+          rowObj.cells[6].style.backgroundColor="grey"; <!--磁盘未监视时显示灰色，并修改文字为N/A -->
+          rowObj.cells[6].innerHTML="N/A";
+        }
+        else if(t3 >= WAR && t3 < CRI){
+          rowObj.cells[6].style.backgroundColor="orange"; <!--磁盘80%-90%时显示橙色 -->
+        }
+        else if(t3 >= CRI){
+          rowObj.cells[6].style.backgroundColor="red";   <!--磁盘大于90%时显示红色 -->
+        }
+        if(t4 == NM ){
+          rowObj.cells[7].style.backgroundColor="grey";
+          rowObj.cells[7].innerHTML="N/A";
+        }
+        else if(t4 >= WAR && t4 < CRI){
+          rowObj.cells[7].style.backgroundColor="orange";
+        }
+        else if(t4 >= CRI){
+          rowObj.cells[7].style.backgroundColor="red";
+        }
+      }
+    }
+  </script>
+{% endblock %}

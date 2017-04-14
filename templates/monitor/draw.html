@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+{% block title %}
+    监控图
+{% endblock %}
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li>监控概述</li>
+        <li class="active">监控图</li>
+    </ol>
+{% endblock %}
+{% block status %}
+    监控图
+{% endblock %}
+{% block style %}
+    <style>
+        #cell li{
+            list-style: none;
+            display: inline-block;
+        }
+        .center{
+            text-align: center;
+        }
+        .line-chart{
+            height: 500px;
+        }
+    </style>
+{% endblock %}l %}
+
+{% block content %}
+<section class="content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="pull-right" style="height: 60px;font-size: 13px">
+        图形&nbsp;
+          <select name="graph" id="graph" onchange="ChangeGraph()" style="height: 22px">
+              <option value="">非所选的</option>
+              <option value="cpu_jumps">CPU jumps</option>
+              <option value="cpu_utilization">CPU utilization</option>
+              <option value="disk_space_usage">Disk space usage /</option>
+              <option value="memory_usage">Memory usage</option>
+          </select>
+      </div>
+    </div>
+    <div class="col-lg-12">
+      <div class="box">
+        <div class="box-header with-border center">
+          <h3 class="box-title">{{ host.hostname }}</h3>
+        </div>
+        <div class="box-body">
+           <div class="chart">
+             <div id="lineChart" class="line-chart"></div>
+           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block action %}
+  <script>
+    function ChangeGraph() {
+      var graph = $("#graph").val();
+      $.ajax({
+          url:"/monitor/draw/",
+          data:{"graph":graph},
+          type:"POST",
+          success:function (callback) {
+              if(callback["data"] == "cpu_utilization"){
+                  $("#lineChart").addClass("line-chart");
+                  // 初始化echarts图表
+                  var chart_cpu = echarts.init(document.getElementById("lineChart"));
+                  var lens = callback["result"].length;
+                  var option2 = {
+                      tooltip : {
+                        trigger: 'item'
+                        },
+                      legend: {
+                          data: ['CPU iowait time', 'CPU system time', 'CPU idle time', 'CPU user time'],
+                          orient: 'vertical',
+                          align: 'left',
+                          y: "top",
+                          x: "right",
+                          formatter: function (name) {
+                              if(name=="CPU iowait time"){
+                                  return name + " "+ callback["result"][lens-1]["cpu_iowait_time"] + "%";
+                              }else if(name=="CPU system time"){
+                                  return name + " "+ callback["result"][lens-1]["cpu_system_time"] + "%";
+                              }else if(name=="CPU idle time"){
+                                  return name + " "+ callback["result"][lens-1]["cpu_idle_time"] + "%";
+                              }else {
+                                  return name + " "+ callback["result"][lens-1]["cpu_user_time"] + "%";
+                              }
+
+                          }
+                      },
+                      grid: {       //直角坐标系内绘图网格
+                        top:'20%',
+                        left: '3%',
+                        right: '5%',
+                        bottom: '15%',
+                        containLabel: true
+                        },
+                      calculable : true,
+                      xAxis : [
+                        {
+                            type : 'category',
+                            boundaryGap : false,
+                            axisLabel:{rotate: 90,interval:0},
+                            data: [],
+                            name: "时间",
+                            nameTextStyle:{
+                                fontSize:8
+                                },
+                            axisLine: {
+                                lineStyle:{
+                                    color:"red",
+                                    width:2    //这里是为了突出显示加上的
+                                    }
+                                }
+                            }
+                        ],
+                      yAxis : [
+                        {
+                            type : 'value',
+                            boundaryGap : false,
+                            splitArea: {
+                                show: false
+                            },
+                            axisLabel : {
+                                formatter: '{value} %'
+                            },
+                            name:"百分比"
+
+                         }
+                        ],
+                       series : [
+                               {
+                                name: 'CPU iowait time',
+                                type: 'line',
+                                data: []
+                            },
+                            {
+                                name: 'CPU system time',
+                                type: 'line',
+                                data: []
+                            },
+                            {
+                                name: 'CPU idle time',
+                                type: 'line',
+                                data: []
+                            },
+                            {
+                                name: 'CPU user time',
+                                type: 'line',
+                                data: []
+                            }
+                       ]
+                  };
+                  chart_cpu.setOption(option2);
+                  var x_name=[];    //时间数组（实际用来盛放X轴坐标值）
+                  var iowait=[];    //iowait数组（实际用来盛放Y坐标值）
+                  var system=[];    //system数组（实际用来盛放Y坐标值）
+                  var idle=[];    //idle数组（实际用来盛放Y坐标值）
+                  var user=[];    //user数组（实际用来盛放Y坐标值）
+                  for(var j=0;j<lens;j++){
+                      if(j==0){
+                         x_name.push(callback["result"][j].year.substring(5,19));
+                      }else if(j==lens-1){
+                          x_name.push(callback["result"][j].year.substring(5,19));
+                      }else {
+                          x_name.push(callback["result"][j].year.substring(11,19));
+                      }
+                      iowait.push(callback["result"][j].cpu_iowait_time);
+                      system.push(callback["result"][j].cpu_system_time);
+                      idle.push(callback["result"][j].cpu_idle_time);
+                      user.push(callback["result"][j].cpu_user_time);
+                  }
+                  chart_cpu.hideLoading();    //隐藏加载动画
+                  //加载数据图表
+                  chart_cpu.setOption({
+                        xAxis: {
+                            data: x_name
+                        },
+                        series:[
+                            {
+                                name: 'CPU iowait time',
+                                areaStyle: {normal: {}},
+                                data: iowait
+                            },
+                            {
+                                name: 'CPU system time',
+                                areaStyle: {normal: {}},
+                                data: system
+                            },
+                            {
+                                name: 'CPU idle time',
+                                areaStyle: {normal: {}},
+                                data: idle
+                            },
+                            {
+                                name: 'CPU user time',
+                                areaStyle: {normal: {}},
+                                data: user
+                            }
+                        ]
+                  });
+              }else {
+                  if(callback["data"] == "memory_usage"){
+                      $("#lineChart").addClass("line-chart");
+                      // 初始化echarts图表
+                      var chart_mem = echarts.init(document.getElementById("lineChart"));
+                      var option_mem = {
+                      tooltip : {
+                        trigger: 'item'
+                        },
+                      legend: {
+                          data: ['available memory'],
+                          orient: 'vertical',
+                          align: 'left',
+                          y: "top"
+                      },
+                      grid: {       //直角坐标系内绘图网格
+                        top:'5%',
+                        left: '3%',
+                        right: '5%',
+                        bottom: '15%',
+                        containLabel: true
+                        },
+                      calculable : true,
+                      xAxis : [
+                        {
+                            type : 'category',
+                            boundaryGap : false,
+                            axisLabel:{rotate: 90,interval:0},
+                            data: [],
+                            name: "时间",
+                            nameTextStyle:{
+                                fontSize:8
+                                },
+                            axisLine: {
+                                lineStyle:{
+                                    color:"red",
+                                    width:2    //这里是为了突出显示加上的
+                                    }
+                                }
+                            }
+                        ],
+                      yAxis : [
+                        {
+                            type : 'value',
+                            boundaryGap : false,
+                            splitArea: {
+                                show: false
+                            },
+                            axisLabel : {
+                                formatter: '{value} MB'
+                            },
+                            name:"内存"
+
+                         }
+                        ],
+                       series : [
+                               {
+                                name: 'available memory',
+                                type: 'line',
+                                data: []
+                            }
+                       ]
+                  };
+                  chart_mem.setOption(option_mem);
+                  chart_mem.showLoading();//数据加载完之前先显示一段简单的loading动画
+                  var x_names=[];    //时间数组（实际用来盛放X轴坐标值）
+                  var mem=[];    //iowait数组（实际用来盛放Y坐标值）
+                  var len_mem = callback["result"].length;
+                  for(var k=0;k<len_mem;k++){
+                      if(k==0){
+                         x_names.push(callback["result"][k].year.substring(5,19));
+                      }else if(k==len_mem-1){
+                          x_names.push(callback["result"][k].year.substring(5,19));
+                      }else {
+                          x_names.push(callback["result"][k].year.substring(11,19));
+                      }
+                      mem.push(callback["result"][k].available_memory);
+                  }
+                  chart_mem.hideLoading();    //隐藏加载动画
+                  //加载数据图表
+                  chart_mem.setOption({
+                        xAxis: {
+                            data: x_names
+                        },
+                        series:[
+                            {
+                                name: 'available memory',
+                                areaStyle: {normal: {}},
+                                data: mem
+                            }
+                        ]
+                  });
+                  }else {
+                      if(callback["data"] == "disk_space_usage"){
+                          $("#lineChart").addClass("line-chart");
+                          var chart_disk = echarts.init(document.getElementById("lineChart"));
+                          var option_disk = {
+                              backgroundColor: 'white',
+                              title: {
+                                left: 'center',
+                                top: 20,
+                                textStyle: {
+                                    color: '#ccc'
+                                    }
+                                },
+                              legend:{
+                                  orient: 'vertical',
+                                  align:'left',
+                                  itemGap: 10,
+                                  data:["Total disk space on /","Free disk space on /"],
+                                  formatter:function (name) {
+                                      if(name=="Total disk space on /"){
+                                          return name + ' ' +callback["result"]["total_disk_space"]+"GB "+"(100%)"
+                                      }else {
+                                          return name + ' ' +callback["result"]["free_disk_space"]+"GB "+"("+callback["result"].free_percent*100+"%)"
+                                      }
+                                  },
+                                  x:'right'
+                              },
+                              series: [
+                                  {
+                                      name:'Disk space usage /',
+                                      type:'pie',
+                                      clockwise:'true',
+                                      startAngle:'0',
+                                      radius : '60%',
+                                      center: ['50%', '50%'],
+                                      data:[
+                                          {
+                                              name: "Free disk space on /",
+                                              value:callback["result"].free_percent,
+                                              itemStyle:{
+                                                 normal:{
+                                                    color:'rgb(30,204,81)',
+                                                    shadowBlur:'90',
+                                                    shadowColor:'rgba(0,0,0,0.5)',
+                                                    shadowOffsetY:'30'
+                                                     }
+                                                 }
+                                          },
+                                          {
+                                              name: "Total disk space on /",
+                                              value:callback["result"].used_percent,
+                                              itemStyle:{
+                                                  normal:{
+                                                     color:'rgb(237,28,36)'
+                                                    }
+                                              }
+                                          }
+                                     ]
+                                  }
+                              ]
+                            };
+                            chart_disk.setOption(option_disk);
+                      }else if(callback["data"] == "cpu_jumps"){
+                          $("#lineChart").addClass("line-chart");
+                          // 初始化echarts图表
+                          var myChart = echarts.init(document.getElementById("lineChart"));
+                          var option = {
+                              tooltip : {
+                                trigger: 'item'
+                                },
+                              legend: {
+                                data:['Context switches','Interrupts'],
+                                y:"top"
+                                },
+                              grid: {       //直角坐标系内绘图网格
+                                left: '3%',
+                                right: '5%',
+                                bottom: '15%',
+                                containLabel: true
+                                },
+                              calculable : true,
+                              xAxis : [
+                                {
+                                    type : 'category',
+                                    boundaryGap : false,
+                                    axisLabel:{rotate: 90,interval:0},
+                                    data: [],
+                                    name: "时间",
+                                    nameTextStyle:{
+                                        fontSize:8
+                                        },
+                                    axisLine: {
+                                        lineStyle:{
+                                            color:"red",
+                                            width:2    //这里是为了突出显示加上的
+                                            }
+                                        }
+                                    }
+                                ],
+                              yAxis : [
+                                {
+                                    type : 'value',
+                                    boundaryGap : true,
+                                    splitArea: { show: false },
+                                    name:"次数"
+
+                                 }
+                                ],
+                               series : [
+                                       {
+                                        name: 'Context switches',
+                                        type: 'line',
+                                        data: []
+                                    },
+                                    {
+                                        name: 'Interrupts',
+                                        type: 'line',
+                                        data: []
+                                    }
+                               ]
+                          };
+                          myChart.setOption(option);
+                          myChart.showLoading();//数据加载完之前先显示一段简单的loading动画
+                          var names=[];    //时间数组（实际用来盛放X轴坐标值）
+                          var num1=[];    //上下文切换数组（实际用来盛放Y坐标值）
+                          var num2=[];    //中断数组（实际用来盛放Y坐标值）
+                          var len = callback["result"].length;
+                          for(var i=0;i<len;i++){
+                              if(i==0){
+                                 names.push(callback["result"][i].year.substring(5,19));
+                              }else if(i==len-1){
+                                  names.push(callback["result"][i].year.substring(5,19));
+                              }else {
+                                  names.push(callback["result"][i].year.substring(11,19));
+                              }
+                              num1.push(callback["result"][i].context_switchs_per_second);
+                              num2.push(callback["result"][i].interrupts_per_second);
+                          }
+                          myChart.hideLoading();    //隐藏加载动画
+                          //加载数据图表
+                          myChart.setOption({
+                                xAxis: {
+                                    data: names
+                                },
+                                series:[
+                                    {
+                                        name: 'Context switches',
+                                        areaStyle: {normal: {}},
+                                        data: num1
+                                    },
+                                    {
+                                        name: 'Interrupts',
+                                        areaStyle: {normal: {}},
+                                        data: num2
+                                    }
+                                ]
+                          });
+                          }else {
+                          var obj = $("#lineChart");
+                          obj.empty();
+                          obj.removeClass("line-chart");
+                          obj.text("未发现数据");
+                          obj.css("text-align","center")
+                      }
+                      }
+                  }
+              }
+          })
+    }
+{#    setInterval("ChangeGraph()",3000);       //定时器#}
+  </script>
+
+{% endblock %}

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>用户注册</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.6 -->
+  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/bootstrap/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="/static/bootstrap/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/dist/css/AdminLTE.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="/static/plugins/iCheck/square/blue.css">
+</head>
+<body class="hold-transition register-page">
+<div class="register-box">
+  <div class="register-logo">
+    <a href="#"><b>学神教育</b></a>
+  </div>
+
+  <div class="register-box-body">
+    <p class="login-box-msg">Register a new membership</p>
+
+    <form action="/register/" method="post" enctype="multipart/form-data" id="regForm">
+      {% csrf_token %}
+      <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-addon"><i class="fa fa-user"></i></div>
+            <input type="text" class="form-control" placeholder="Full name" name="username">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-addon"><i class="fa fa-envelope"></i></div>
+            <input type="email" class="form-control" placeholder="Email" name="email">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-addon"><i class="fa fa-lock"></i></div>
+            <input type="password" class="form-control" placeholder="Password" name="password">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-addon"><i class="fa fa-lock"></i></div>
+            <input type="password" class="form-control" placeholder="Re-password" name="password_retry">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-addon"><i class="fa fa-phone"></i></div>
+            <input type="text" class="form-control" placeholder="Phone" name="phone">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-addon"><i class="fa fa-picture-o"></i></div>
+            <input type="file" name="photo" value="选择图片" class="form-control" accept="image/jpg image/png">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <button type="submit" class="btn btn-primary btn-block btn-flat">Register</button>
+        </div>
+        <div class="col-xs-8">
+          <div class="checkbox icheck">
+            <label>
+              <input type="checkbox"> I agree to the <a href="#">terms</a>
+            </label>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <a href="/login/" class="text-center">I already have a membership</a>
+  </div>
+  <!-- /.form-box -->
+</div>
+<!-- /.register-box -->
+
+<!-- jQuery 2.2.3 -->
+<script src="/static/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<!-- iCheck -->
+<script src="/static/plugins/iCheck/icheck.min.js"></script>
+<script src="/static/plugins/bootstrapValidator/bootstrapValidator.js"></script>
+<script>
+  $(function () {
+    $('input').iCheck({
+      checkboxClass: 'icheckbox_square-blue',
+      radioClass: 'iradio_square-blue',
+      increaseArea: '20%' // optional
+    });
+  });
+</script>
+<script>
+    $(document).ready(function () {
+        $("#regForm").bootstrapValidator({
+            message: 'This value is not valid',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                username: {
+                    message: 'The username is not valid',
+                    validators: {
+                        notEmpty: {
+                            message: 'The username is required and cannot be empty'
+                        },
+                        stringLength: {
+                            min: 4,
+                            max: 30,
+                            message: 'The username must be more than 4 and less than 30 characters long'
+                        },
+                        threshold :  4 , //有6字符以上才发送ajax请求
+                        remote: {//ajax验证。向服务发送当前input name值，获得一个json数据。例表示正确：{"valid",true}
+                             url: '/userRegisterExist/',//验证地址
+                             message: 'username already exits',//提示消息
+                             delay :  2000,//每输入一个字符，就发ajax请求，服务器压力还是太大，设置2秒发送一次ajax（默认输入一个字符，提交一次，服务器压力太大）
+                             type: 'POST',//请求方式
+                             dataType: "json"
+                             /*自定义提交数据，默认值提交当前input value
+                              *  data: function(validator) {
+                                   return {
+                                       password: $('[name="passwordNameAttributeInYourForm"]').val(),
+                                       whatever: $('[name="whateverNameAttributeInYourForm"]').val()
+                                   };
+                                }*/
+                        },
+                        regexp: {
+                            regexp: /^[a-zA-Z0-9_]+$/,
+                            message: 'The username can only consist of alphabetical, number and underscore'
+                        }
+                    }
+                },
+                password: {
+                    message: "The password is not valid",
+                    validators: {
+                        notEmpty: {
+                            'message': "the password is required and cannot be empty"
+                        },
+                        stringLength: {
+                            min: 6,
+                            max: 30,
+                            message: 'The username must be more than 6 and less than 30 characters long'
+                        },
+                        different: {//不能和用户名相同
+                         field: 'username',
+                         message: 'Not the same username '
+                        }
+                    }
+                },
+                password_retry: {
+                    message: 'the password is invalid',
+                    validators: {
+                     notEmpty: {
+                         message: 'the password is required and cannot be empty'
+                     },
+                     stringLength: {
+                         min: 6,
+                         max: 30,
+                         message: 'The username must be more than 6 and less than 30 characters long'
+                     },
+                     identical: {//相同
+                         field: 'password',
+                         message: 'passwords does not match'
+                     },
+                     different: {//不能和用户名相同
+                         field: 'username',
+                         message: 'not the same username'
+                     },
+                     regexp: {//匹配规则
+                         regexp: /^[a-zA-Z0-9_\.]+$/,
+                         message: 'The username can only consist of alphabetical, number, dot and underscore'
+                        }
+                    }
+                },
+                email: {
+                 validators: {
+                     notEmpty: {
+                         message: 'the email is required and cannot be empty'
+                     },
+                     emailAddress: {
+                         message: 'please enter a valid address,eg：123@qq.com'
+                        }
+                    }
+                },
+                phone: {
+                 message: 'The phone is not valid',
+                 validators: {
+                     notEmpty: {
+                         message: 'the phone is required and cannot be empty'
+                     },
+                     stringLength: {
+                         min: 11,
+                         max: 11,
+                         message: 'please enter a 11 phone number'
+                     },
+                     regexp: {
+                         regexp: /^1[3|5|7|8]{1}[0-9]{9}$/,
+                         message: 'please enter a valid phone number'
+                        }
+                    }
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>

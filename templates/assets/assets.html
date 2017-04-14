@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load custom_tag %}
+
+{% block title %}
+    资产列表
+{% endblock %}
+{% block status %}
+    资产列表
+{% endblock %}
+
+{% block style %}
+    <style>
+        #pagging{
+            margin-top: 30px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+    #pagging a{
+        text-decoration: none;
+        color: #000;
+        border: 1px solid #e1e2e3;
+        margin: 3px;
+        padding: 5px 10px;
+        text-align: center;
+        border-radius: 3px;
+        font-family: Helvetica,Arial,sans-serif;
+    }
+    </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li class="active">资产管理</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+<section class="content">
+      <div class="row">
+        <div class="col-lg-12" style="margin: 0 20px 10px 0; font-size: 12px">
+            <input type="text" size="30" placeholder="search" style="height: 30px">
+            <select onchange="ChangeType(this)" id="asset-search" style="height: 30px;width: 120px">
+                <option value="">资产类型</option>
+                <option disabled>-----</option>
+                <option value="Server">服务器</option>
+                <option value="Router">路由器</option>
+                <option value="Switch">交换机</option>
+                <option value="Storage">存储设备</option>
+                <option value="Security">安全设备</option>
+                <option value="Equipment">机房设备</option>
+                <option value="Software">软件资产</option>
+                <option value="Others">其它</option>
+            </select>
+            <select onchange="ChangeStatus(this)" id="status-search" style="height: 30px;width: 120px">
+                <option value="">状态</option>
+                <option disabled>-----</option>
+                <option value="0">在线</option>
+                <option value="1">已下线</option>
+                <option value="2">未知</option>
+                <option value="3">故障</option>
+                <option value="4">备用</option>
+            </select>
+            <button class="btn btn-inline btn-success" style="height: 30px;font-size: 12px">搜索</button>
+            <a href="/assets/asset_add/" class="pull-right"><i class="glyphicon glyphicon-plus"></i>增加资产</a>
+        </div>
+        <div class="col-xs-12">
+          <div class="box">
+{#              <div class="col-sm-6">#}
+{#                  <label>#}
+{#                      Show#}
+{#                      <select name="example1_length" id="entries" onchange="change_entries(this)">#}
+{#                          <option value="10">10</option>#}
+{#                          <option value="20">20</option>#}
+{#                          <option value="50">50</option>#}
+{#                          <option value="100">100</option>#}
+{#                      </select>#}
+{#                      entries#}
+{#                  </label>#}
+{#              </div>#}
+            <div class="box-body">
+              <table id="example1" class="table table-striped">
+                <thead>
+                <tr style="color: white;background: #6f7e95;">
+                  <th><input type="checkbox" id="checkAll"></th>
+                  <th>资产SN号</th>
+                  <th>资产名称</th>
+                  <th>资产类型</th>
+                  <th>管理IP</th>
+                  <th>业务线</th>
+                  <th>购买时间</th>
+                  <th>状态</th>
+                  <th>资产管理员</th>
+                </tr>
+                {% for line in result %}
+                    <tr>
+                        <td><input type="checkbox" name="_dataCheckBox"></td>
+                        <td>
+                            <a href="/assets/asset_content/{{ line.id }}">{{ line.sn }}</a>
+                        </td>
+                        <td>{{ line.name }}</td>
+                        <td>{{ line.get_asset_type_display }}</td>
+                        <td>{{ line.management_ip }}</td>
+                        <td>{{ line.business_unit.name }}</td>
+                        <td>{{ line.trade_date | date:"Y-m-d"  }}</td>
+                        <td>
+                            {% ifequal line.status 0 %}
+                                <i class="fa fa-circle text-green"></i>&nbsp;在线
+                            {% else %}
+                                {% ifequal line.status 1 %}
+                                    <i class="fa fa-circle text-red"></i>&nbsp;已下线
+                                    {% else %}
+                                        {% ifequal line.status 2 %}
+                                        <i class="fa fa-circle text-grey"></i>&nbsp;未知
+                                        {% else %}
+                                            {% ifequal line.status 3 %}
+                                                <i class="fa fa-circle text-yellow"></i>&nbsp;故障
+                                                {% else %}
+                                                    <i class="fa fa-circle text-blue"></i>&nbsp;备用
+                                            {% endifequal %}
+                                        {% endifequal %}
+                                {% endifequal %}
+                            {% endifequal %}
+                        </td>
+                        <td>{{ line.admin.username }}</td>
+                    </tr>
+                {% endfor %}
+                </thead>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+          <div class="col-sm-3 pull-right">
+            <div >
+                Showing {{ page }} To {{ all_page_count }} Of {{ count }} Entries
+            </div>
+          </div>
+          <div class="col-sm-5 pull-left" id="action_buttons" style="font-size: 12px">
+              <span id="selected_count">0</span>&nbsp;选择 &nbsp;
+              <button class="btn btn-default btn-sm" disabled>启用</button>
+              <button class="btn btn-default btn-sm" disabled>禁用</button>
+              <button class="btn btn-default btn-sm" disabled>删除</button>
+          </div>
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <div id="pagging">
+        {{ page_string }}
+    </div>
+    <!-- /.content -->
+{% endblock %}
+
+
+
+{% block action %}
+    <script>
+        function change_entries(doc) {
+            var entries = $(doc).val();
+            $.ajax({
+                url:"/assets/entries/",
+                data:{"entries":entries},
+                type:"POST",
+                success:function (callback) {
+                    if(callback["status"] == "success"){
+                        $("#entries").find("option[value="+entries+"]").attr("selected",true);
+
+                    }
+                }
+            })
+        }
+    </script>
+    <script>
+        function ChangeType(doc) {
+            var type = $(doc).val();
+            location.href = "/assets/asset_list/?type=" + type;
+        }
+        function ChangeStatus(doc) {
+            var status = $(doc).val();
+            location.href = "/assets/asset_list/?status=" + status;
+        }
+    </script>
+    <script>
+        window.onload=function () {
+            $("#asset-search").find("option[value='{{ type }}']").attr("selected",true);
+            $("#status-search").find("option[value='{{ status }}']").attr("selected",true);
+        }
+    </script>
+    <script>
+        $(function () {
+            a = $("input[name='_dataCheckBox']:checked");
+            $("#selected_count").val(a.length);
+        })
+    </script>
+{% endblock %}

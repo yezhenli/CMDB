@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}
+    修改机柜
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li>机柜管理</li>
+        <li>机柜</li>
+        <li class="active">{{ cabinet_obj.name }}</li>
+    </ol>
+{% endblock %}
+{% block status %}
+    增加机柜
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+      <div class="nav-tabs-custom">
+       <ul class="nav nav-tabs">
+        <li class="active selected">
+            <a data-toggle="tab" href="#tab-cabinet-info" aria-expanded="true">GENERAL</a>
+        </li>
+        <li class="">
+            <a data-toggle="tab" href="#tab-rack-info" aria-expanded="false">机架</a>
+        </li>
+       </ul>
+       <div class="tab-content list-group">
+        <div id="tab-cabinet-info" class="tab-pane fade active in">
+            <form class="form-horizontal" action="/assets/cabinet/change/" method="post">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">机房</label>
+                  <div class="col-sm-3">
+                    <select name="idc" style="height: 34px;width: 120px;font-size: 12px" id="idc_selected">
+                          <option value="">--------</option>
+                          {% for idc in idc_list %}
+                              <option value="{{ idc.id }}">{{ idc.name }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">机柜编号</label>
+                  <div class="col-sm-3">
+                    <input type="text" class="form-control" name="name" value="{{ cabinet_obj.name }}">
+                  </div>
+                </div>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer" style="margin-right: 100px">
+                <button type="submit" class="btn btn-info pull-right">保存</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+        </div>
+        <div id="tab-rack-info" class="tab-pane fade">
+          <form action="/assets/cabinet/change/" method="post">
+            <div class="box-body">
+            {% for rack in rack_list %}
+              <div class="form-group">
+                <label><b>机架：</b><span class="btn btn-primary btn-xs">{{ rack.name }}</span></label>
+                <div style="margin-top: 5px">
+                  <label for="rack-name" class="control-label">机架名称*:</label>
+                  <input type="text" class="form-inline" name="rack_name" value="{{ rack.name }}">
+                </div>
+              </div>
+            {% endfor %}
+             <div id="add-rack">
+                 <a href="javascript:void(0)" onclick="AddRack()"><i class="glyphicon glyphicon-plus"></i>添加另一个 机架</a>
+             </div>
+            </div>
+            <div class="box-footer" style="margin-right: 100px">
+                <button type="submit" class="btn btn-info pull-right">保存</button>
+            </div>
+          </form>
+        </div>
+       </div>
+      </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block action %}
+    <script>
+        window.onload=function () {
+            $("#idc_selected").val({{ cabinet_obj.idc_id }}).attr("selected",true);
+        }
+    </script>
+    <script>
+        function AddRack() {
+            var num = $("#tab-rack-info b").length;
+            num = num +1;
+            var count = num - {{ count }};
+            var box = '<div class="form-group">'+
+                '<label><b>机架：</b><span class="btn btn-primary btn-xs">#'+num+'</span></label>'+
+                '<div style="margin-top: 5px">'+
+                  '<label for="rack-name" class="control-label">机架名称*:</label>'+
+                  '<input type="text" class="form-inline" name="new_rack_name_'+count+'">'+
+                '</div>'+
+              '</div>';
+            $("#add-rack").prev().append(box);
+        }
+    </script>
+{% endblock %}

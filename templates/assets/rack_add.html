@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}
+    增加机架
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li>机架管理</li>
+        <li class="active">增加机架</li>
+    </ol>
+{% endblock %}
+{% block status %}
+    增加机架
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-info">
+            <!-- form start -->
+            <form class="form-horizontal" action="/assets/rack_add/" method="post">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">机柜</label>
+                  <div class="col-sm-3">
+                    <select name="cabinet" style="height: 34px;width: 120px">
+                          <option value="">--------</option>
+                          {% for cabinet in cabinet_list %}
+                              <option value="{{ cabinet.id }}">{{ cabinet.name }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="inputPassword3" class="col-sm-2 control-label">机架名称</label>
+                  <div class="col-sm-3">
+                    <input type="text" class="form-control" name="name">
+                  </div>
+                </div>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer" style="margin-right: 100px">
+                <button type="submit" class="btn btn-info pull-right">保存</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+          </div>
+    </div>
+</div>
+{% endblock %}

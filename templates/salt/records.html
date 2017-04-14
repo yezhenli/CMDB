@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}
+    执行记录
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li>运维管理</li>
+        <li class="active">执行记录</li>
+    </ol>
+{% endblock %}
+
+{% block style %}
+    <style>
+        textarea {
+            white-space: pre;
+            font-family: Courier, monospace;
+            width:100%;
+            height:450px;
+            background-color: black;
+            color: #ffffff;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="content">
+    <div class="col-lg-12">
+        <h2>Salt结果列表</h2>
+            <div class="row" >
+                <div href="#" class="col-lg-12" style="margin: 0 20px 10px 0">
+                    <input type="text" size="30" placeholder="搜索" style="height: 30px">
+                    <select onchange="ChangeMinion(this)" id="minion-search" style="height: 30px;width: 150px">
+                        <option value="">以 Minions</option>
+                        <option disabled>----------</option>
+                        {% for minion in minions_list %}
+                            <option value="{{ minion.minion }}">{{ minion.minion }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-inline btn-success" style="height: 30px">搜索</button>
+                </div>
+                <div class="col-lg-12">
+                    <table class="table table-hover table-bordered  text-center">
+                        <tr style="color: white;background: #6f7e95;">
+                            <th style="text-align: center"><input type="checkbox" id="checkAll"></th>
+                            <th class="text-center">执行时间</th>
+                            <th class="text-center">任务号</th>
+                            <th class="text-center">方式</th>
+                            <th class="text-center">主机</th>
+                            <th class="text-center">功能</th>
+                            <th class="text-center">参数</th>
+                            <th class="text-center">类型</th>
+                        </tr>
+
+    {#                        {% autopaginate result_list 20 %}#}
+                        {% for result in result_list %}
+                            <tr class="{% if result.result and result.result != '{}' %}bg-success{% else %}bg-danger{% endif %}">
+                                <td><input type="checkbox" name="_dataCheckBox"></td>
+                                <td>
+                                    <a href="#" onclick="result('{{ result.id }}')" data-toggle="modal" data-target="#result">
+                                    {{ result.datetime }}
+                                    </a>
+                                </td>
+                                <td>{{ result.jid }}</td>
+                                <td>{{ result.client }}</td>
+                                <td>{{ result.minions }}</td>
+                                <td>{{ result.fun }}</td>
+                                <td>{{ result.arg }}</td>
+                                <td>{{ result.tgt_type }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+{#    {% paginate %}#}
+        <div class="modal fade" id="result" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4>Salt结果详细信息
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <label for="result_data" class="sr-only"></label>
+                        <textarea id="result_data"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-5 pull-left" id="action_buttons" style="font-size: 12px">
+      <span id="selected_count">0</span>&nbsp;选择 &nbsp;
+      <button class="btn btn-default btn-sm" disabled>启用</button>
+      <button class="btn btn-default btn-sm" disabled>禁用</button>
+      <button class="btn btn-default btn-sm" disabled>修改</button>
+      <button class="btn btn-default btn-sm" disabled onclick="RackDelete()">删除</button>
+    </div>
+    <div class="pull-right" style="margin-right: 20px">
+        {{ count }}&nbsp;记录
+    </div>
+</section>
+{% endblock %}
+
+{% block action %}
+    <script src="{% static 'salt/js/formatJSON.js' %}"></script>
+    <script>
+    function result(id){
+        $.getJSON("{% url 'salt:execute_fun' 1 %}",{id:id},function(result){
+            var rv=document.getElementById('result_data');
+            rv.value="";
+            for (var k in result["ret"]) {
+                var v = result["ret"][k];
+                if (typeof v != 'object') {
+                    rv.value += "\n" + k + ":" + v;
+                }
+                else {
+                    rv.value += "\n" + k + ":" + formatJson(v, true);
+                }
+            }
+        })
+    }
+    function ChangeMinion(doc) {
+        var minion = $(doc).val();
+        location.href="/salt/record/?minion="+minion;
+        $(doc).val(type).attr("selected",true);
+    }
+    window.onload=function () {
+            $("#minion-search").find("option[value='{{ minion }}']").attr("selected",true);
+        }
+    </script>
+{% endblock %}

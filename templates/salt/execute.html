@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}
+    执行命令
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li>运维管理</li>
+        <li class="active">执行命令</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+<section class="content">
+    <div class="col-lg-12">
+        <h2>
+            执行命令&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <small class="text-danger">{{ salt_server.idc.name }} -- {{ salt_server.url }} -- {{ salt_server.role }}</small>
+    {#        机房#}
+            <label for="idc" disabled="disabled"></label>
+            <div class="btn-group pull-right">
+                <a class="btn btn-info " href="/admin/salt/module/add/" target="_blank">
+                    <span class="glyphicon glyphicon-plus"></span>&nbsp;模块</a>
+                <a class="btn btn-info " href="/admin/salt/command/add/" target="_blank">
+                    <span class="glyphicon glyphicon-plus"></span>&nbsp;命令</a>
+                <button class="btn btn-info" title="命令帮助信息" onclick="cmd_help()"  data-toggle="modal" data-target="#cmd_modal">
+                    <span class="glyphicon glyphicon-question-sign"></span>&nbsp;帮助</button>
+            {#            Server选择#}
+                <div class="btn-group pull-right dropdown">
+                    <a href="#" class="btn btn-info dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        &nbsp;SaltServer&nbsp;<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        {% for s in server_list %}
+                            <li><a href="{% url 'salt:execute' s.id%}">{{ s.idc.name }} -- {{ s.url }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </h2>
+        {% if error %}<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert">&times;</a>{{ error }}</div>{% endif %}
+        {% if success %}<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a>{{ success }}</div>{% endif %}
+    {#        命令#}
+        <div class="row" >
+    {#        动作类型#}
+            <div class="col-sm-3 col-md-3">
+                <div class="form-group">
+                    <label for="client" class="sr-only">client</label>
+                    <select class="form-control" id="client" onchange="Client_change(this)">
+                        <option value="local_async" selected="selected">Local_Async</option>
+                        <option value="local">Local</option>
+                        <option value="runner_async">Runner_Async</option>
+                        <option value="runner">Runner</option>
+                        <option value="ssh">Ssh</option>
+                        <option value="wheel">Wheel</option>
+                    </select>
+                </div>
+            </div>
+    {#        目标类型#}
+            <div class="col-sm-3 col-md-3">
+                <div class="form-group">
+                    <label for="tgt_type" class="sr-only">Target Type</label>
+                    <select class="form-control" id="tgt_type" onchange="Tgt_change(this)">
+                        <option value="glob" selected="selected">Glob</option>
+                        <option value="grain"       >Grain</option>
+                        <option value="grain_pcre" >Grain_Pcre</option>
+                        <option value="list"        >List</option>
+                        <option value="nodegroup"  >NodeGroup</option>
+                        <option value="pcre"        >pcre</option>
+                        <option value="pillar"      >Pillar</option>
+                        <option value="pillar_pcre">Pillar_Pcre</option>
+                        <option value="Range"       >Range</option>
+                        <option value="compound"   >Compound</option>
+                    </select>
+                </div>
+            </div>
+    {#        模块#}
+            <div class="col-sm-3 col-md-3">
+                 <div class="form-group">
+                        <label for="module" class="sr-only">Module</label>
+                        <select class="form-control" id="module" onchange="Module_change(this); return false">
+                            <option value="">——Module——</option>
+                            {% for module in module_list %}
+                                <option value="{{ module.name }}">{{ module.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+            </div>
+    {#        命令#}
+            <div class="col-sm-3 col-md-3">
+                <div class="form-group">
+                    <label for="fun" class="sr-only">Function</label>
+                    <select class="form-control" id="fun">
+                        <option value="">——Func———</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+    {#        目标#}
+            <div class="col-sm-6 col-md-6">
+                <div class="form-group">
+                    <label for="tgt" class="sr-only">Target</label>
+                    <input type="text" class="form-control" placeholder="Target" id="tgt">
+                </div>
+            </div>
+    {#        参数#}
+            <div class="col-sm-5 col-md-5">
+                 <div class="form-group">
+                    <label for="arg" class="sr-only">*arg</label>
+                    <input class="form-control" type="text" value="" id="arg" placeholder="*args，用逗号分隔参数，使用等号定义参数的键和值。"
+                    onkeypress="if(event.keyCode==13) {run.click();return false;}">
+                </div>
+            </div>
+    {#        执行#}
+            <div class="col-sm-1 col-md-1">
+                 <div class="form-group ">
+                     <label for="run" class="sr-only">Execute</label>
+                     <button type="button" id="run" class="form-control btn btn-success" title="执行命令" onclick="Run()">
+                         <span class="glyphicon glyphicon-play"></span>
+                     </button>
+                 </div>
+            </div>
+        </div>
+    {#        结果#}
+        <div class="row">
+    {#            分类#}
+            <div class="col-sm-3 col-md-3">
+    {#            在线主机#}
+                <div class="form-group">
+                     <label for="minions_up">Minions</label>
+                     <select class="form-control" size="23"  id="minions_up" onchange="Minion_change(this)">
+                         {% for u in minion_list %}
+                        <option value="{{ u }}">{{ u }}</option>
+                        {% endfor %}
+                     </select>
+                 </div>
+    {#            离线主机#}
+    {#                <div class="form-group">#}
+    {#                     <label for="minions_down">离线Minions</label>#}
+    {#                     <select class="form-control" size="10" id="minions_down" disabled="disabled">#}
+    {#                         {% for d in minions_down %}#}
+    {#                        <option value="{{ d }}">{{ d }}</option>#}
+    {#                        {% endfor %}#}
+    {#                     </select>#}
+    {#                 </div>#}
+            </div>
+    {#            结果#}
+            <div class="col-sm-9 col-md-9">
+                <div class="form-group">
+                    <label for="result" > </label>
+                    <textarea id="result" readonly rows="30" cols="100" style="background-color: black;color: white">[root@salt-master ~]#</textarea>
+                 </div>
+            </div>
+        </div>
+    {#        事件#}
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <div id="events"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="cmd_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4>Salt命令<code>"<span id="cmd"></span>"</code>的帮助信息
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </h4>
+                </div>
+                <div class="modal-body" id="doc"></div>
+                <div class="modal-footer">
+                    <div class="btn-group pull-right">
+                        <a class="btn btn-info" data-dismiss="modal">关闭</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block action %}
+    <script src="{% static 'salt/js/formatJSON.js' %}"></script>
+    <script>
+    //类型条件
+        function Tgt_change(doc) {
+            var tgt_type = $(doc).val();
+                var minion_up = document.getElementById('minion_up');
+                var tgt = document.getElementById("tgt");
+                if(tgt_type=="list"){
+                    minion_up.disabled=false;
+                    minion_up.setAttribute("multiple","multiple");  //设为多选框
+                }
+                else if(tgt_type=='glob'){
+                    minion_up.disabled=false;
+                    minion_up.removeAttribute("multiple");  //取消多选框
+                    var length = minion_up.options.length - 1;
+                    for(var i = length; i >= 0; i--) {
+                        minion_up[i].selected = false; //清除选择状态
+                    }
+                }
+                else {minion_up.disabled=true;}
+        }
+        //CLIENT + 模块级联
+        function Client_change(doc) {
+             $("#module").html("<option value=''>——Module——</option>");  //初始化数据
+                var client = $(doc).val();    //获取当前选择对象的value值
+                $.getJSON("{% url 'salt:command' %}",{client:client},function(result){
+                    //返回值 result 在这里是一个列表
+                    for(var i = result.length-1;i>=0;i--){
+                        // 把 result 的每一项作为选项显示在网页上
+                        $("<option value='"+result[i]+"'>"+result[i]+"</option>").appendTo("#module");
+                    }
+                });
+                return false;  //不刷新页面
+        }
+        //模块+命令级联
+        function Module_change(doc) {
+            $('#fun').html("<option value=''>——Func——</option>"); //初始化数据
+                var module_name = $(doc).val();                 //获取当前选择对象的value值
+                var client = $('#client').val();                 //获取当前选择对象的value值
+                $.getJSON("{% url 'salt:command' %}",{client:client,module_name:module_name},function(result){
+                    //返回值 result 在这里是一个列表
+                    for (var i = result.length - 1; i >= 0; i--) {
+                      // 把 result 的每一项作为选项显示在网页上
+                        $("<option value='"+result[i]+"'>"+result[i]+"</option>").appendTo("#fun");
+                    }
+                });
+                return false; //不刷新页面
+        }
+        //目标选择
+        function Minion_change(doc) {
+            var minions = $(doc).val().toString();
+            $("#tgt").val(minions);
+        }
+        //执行按钮
+        function Run() {
+            var client = $('#client').val();
+            var tgt_type = $('#tgt_type').val();
+            var tgt = $('#tgt').val();
+            var fun = $('#fun').val();
+            var arg = $('#arg').val();
+            var r = client.indexOf('runner');
+            var w = client.indexOf('wheel');
+            if(!tgt && r<0 && w<0){alert("目标不能为空")}
+            else if(!fun){alert("请选择命令")}
+            else {cmd_result(client,tgt_type,tgt,fun,arg)}
+        }
+        //执行命令功能
+        function cmd_result(client,tgt_type,tgt,fun,arg) {
+            var r=client.indexOf('runner');
+            var w=client.indexOf('wheel');
+            var s=client.indexOf('ssh');
+            var a=client.indexOf('async');
+            if(r>=0){var command = '[root@salt-master ~]# salt-run '+fun+' '+arg}
+            if(w>=0){command = '[root@salt-master ~]# salt-run wheel.'+fun+' '+arg}
+            else if ( s>=0 ){command = '[root@salt-master ~]# salt-ssh "'+tgt+'" '+fun+' '+arg+' expre_type="'+tgt_type+'"';}
+            else{command = '[root@salt-master ~]# salt "'+tgt+'" '+fun+' '+arg+' expre_type="'+tgt_type+'"';}
+            var rv=document.getElementById('result');
+            rv.value=command;
+            $.getJSON("{% url 'salt:execute_fun' salt_server.id%}",{client:client,tgt_type:tgt_type,tgt:tgt,fun:fun,arg:arg},function(result){
+                if(a>=0){   //异步命令返回JID
+                    rv.value += "\nJID"+ result;
+                }else {//同步命令直接返回结果，字典类型存于数据库
+                    for (var k in result["ret"]){
+                        console.log(k);
+                        var v = result["ret"][k];
+                        if (typeof v != 'object'){
+                            rv.value += "\n" + k + ":" + v;
+                        }else {
+                            rv.value += "\n" + k + ":" + formatJson(v, true);
+                        }
+                    }
+                }
+            })
+        }
+    </script>
+{% endblock %}

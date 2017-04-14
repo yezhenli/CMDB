@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}
+    Minions管理
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li>运维管理</li>
+        <li class="active">Minions管理</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+<section class="content">
+    <div class="col-lg-12">
+        <h2>
+            Minions管理
+            <small class="text-danger">{{ salt_server.idc.name }} -- {{ salt_server.url }} -- {{ salt_server.role }}</small>
+{#            Server选择#}
+            <div class="btn-group pull-right dropdown">
+                <a href="#" class="btn btn-info dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    &nbsp;SaltServer&nbsp;<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    {% for s in server_list %}
+                        <li><a href="{% url 'salt:minions' s.id%}">{{ s.idc.name }} -- {{ s.url }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </h2>
+        {% if error %}<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert">&times;</a>{{ error }}</div>{% endif %}
+        {% if success %}<div class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a>{{ success }}</div>{% endif %}
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12 text-center">
+                {% if minion_list %}
+{#                {% autopaginate minion_list 15 %}#}
+                {% endif %}
+                <div class="table-responsive" >
+                    <table class="table table-striped">
+                        <thead>
+                            <tr style="color: white;background: #6f7e95;">
+                                <th style="text-align: center"><input type="checkbox" id="checkAll"></th>
+                                <th class="text-center">Minion</th>
+                                <th class="text-center">IP地址</th>
+                                <th class="text-center">系统</th>
+                                <th class="text-center">状态</th>
+                                <th class="text-center">Grains</th>
+                                <th class="text-center">Pillar</th>
+                                <th class="text-center">操作</th>
+                            </tr>
+                        </thead>
+                        {% for minion in minionList %}
+                            <tbody>
+                                <tr>
+                                    <td><input type="checkbox" name="_dataCheckBox"></td>
+                                    <td>{{ minion.minion }}</td>
+                                    <td>{% for ip in minion.ip %}{{ ip }}&nbsp;{% endfor %}</td>
+                                    <td>{{ minion.os }}</td>
+                                    <td class="{% if minion.status == 'Accepted' %}bg-success{% elif minion.status == 'Unaccepted' %}bg-danger{% elif minion.status == 'Unknown' %} bg-alert {% else %}bg-info{% endif %}">{{ minion.status }}</td>
+                                    <td><a href="#" onclick="active('{{ minion.id }}','grains','{{ minion.minion }}')" data-toggle="modal" data-target="#result">
+                                        Grains</a></td>
+                                    <td><a href="#" onclick="active('{{ minion.id }}','pillar','{{ minion.minion }}')" data-toggle="modal" data-target="#result">
+                                        Pillar</a></td>
+                                    <td>
+                                        {% if minion.status == 'Accepted' %}
+                                            <button class="btn btn-danger btn-xs" onclick="active('{{ minion.id }}','delete','{{ minion.minion }}')" title="删除KEY">
+                                                <span class="glyphicon glyphicon-remove"></span></button>
+                                        {% elif minion.status == 'Unaccepted' %}
+                                            <a class="btn btn-success btn-xs" onclick="active('{{ minion.id }}','accept','{{ minion.minion }}')" title="接受KEY">
+                                                <span class="glyphicon glyphicon-ok"></span></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+{#                {% paginate %}#}
+            </div>
+        </div>
+        <div class="modal fade" id="result" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4><code id="minion"></code>的<code id="target"></code>详细信息
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <label for="result_data" class="sr-only"></label>
+                        <textarea id="result_data" rows="25" cols="80" style="background-color: black;color: white"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block action %}
+    <script src="/static/salt/js/formatJSON.js"></script>
+    <script>
+        function active(id,active,minion) {
+            $("#minion").html(minion);
+            $("#target").html(active);
+            if(active == 'grains' || active == 'pillar'){
+                $.getJSON("{% url 'salt:minions_fun' %}",{id:id,active:active},function(result){
+                    var rv = document.getElementById('result_data');
+                    rv.value = formatJson(result, true);
+                })
+            }else if(active == 'delete'){
+                if(confirm("是否删除key"+minion+"?")){
+                    $.getJSON("{% url 'salt:minions_fun' %}",{id:id,active:active},function(result){
+                        alert(result);
+                    })
+                }
+            }
+        }
+    </script>
+{% endblock %}
+

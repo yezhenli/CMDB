@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}
+    增加角色
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+        <li>权限系统</li>
+        <li class="active">添加角色</li>
+    </ol>
+{% endblock %}
+{% block status %}
+    增加角色
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="box box-info">
+            <form class="form-horizontal" action="/auth/cmdb/add/" method="post">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="" class="col-sm-2 control-label">角色名称</label>
+                  <div class="col-sm-3">
+                    <input type="text" class="form-control" name="group_name">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="" class="col-sm-2 control-label">角色描述</label>
+                  <div class="col-sm-3">
+                    <input type="text" class="form-control" name="explanation">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="" class="col-sm-2 control-label">是否启用</label>
+                  <div class="col-sm-3">
+                      <p><input type="radio" name="enable" value="1" checked>启用</p>
+                      <p><input type="radio" name="enable" value="0">禁用</p>
+                  </div>
+                </div>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer" style="margin-right: 100px">
+                <button type="submit" class="btn btn-info pull-right">保存</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+          </div>
+    </div>
+</div>
+{% endblock %}
